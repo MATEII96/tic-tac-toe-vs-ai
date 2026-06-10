@@ -170,4 +170,15 @@ class TicTacToeApp:
             cell.bind('<Leave>', lambda e, idx=i: self._on_hover(idx, False))
             self.cells.append(cell)
 
+        self.brain_info = tk.Label(
+            self.root, text='', font=('Segoe UI', 9),
+            bg=self.COLOR_BG, fg='#9090a0',
+        )
+        self.brain_info.grid(row=3, column=0, columnspan=3, pady=(12, 4))
+
+        btn_frame = tk.Frame(self.root, bg=self.COLOR_BG)
+        btn_frame.grid(row=4, column=0, columnspan=3, pady=(4, 14), padx=20, sticky='ew')
+
+        self._make_button(btn_frame, 'Partida noua', self._new_game).pack(side='left', padx=3)
+        self._make_button(btn_frame, 'Antreneaza', self._train).pack(side='left', padx=3)
         
