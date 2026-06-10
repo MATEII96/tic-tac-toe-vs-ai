@@ -283,3 +283,39 @@ class TicTacToeApp:
         )
         if not games:
             return
+        
+        progress = tk.Toplevel(self.root)
+        progress.title('Antrenament in desfasurare')
+        progress.configure(bg=self.COLOR_BG)
+        progress.resizable(False, False)
+        progress.transient(self.root)
+        progress.grab_set()
+
+        label = tk.Label(progress, text='Pornire...', font=self.STATUS_FONT,
+                         bg=self.COLOR_BG, fg=self.COLOR_TEXT, width=42)
+        label.pack(padx=20, pady=(18, 6))
+
+        bar_bg = tk.Frame(progress, bg='#2a2a3e', width=320,height=14)
+        bar_bg.pack(padx=20, pady=(0, 6))
+        bar_bg.pack_propagate(False)
+        bar_fill = tk.Frame(bar_bg, bg='#7dd3fc', width=0, height=14)
+        bar_fill.place(x=0, y=0)
+
+        detail = tk.Label(progress, text='', font=('Segoe UI', 9),
+                          bg=self.COLOR_BG, fg='#9090a0', width = 42)
+        detail.pack(padx=20,pady=(0, 16))
+        
+        state = {'i': 0, 'w': 0, 'l': 0, 'd': 0, 'cancelled': False}
+
+        def on_close():
+            state['cancelled'] = True
+        progress.protocol('WM_DELETE_WINDOW', on_close)
+
+        batch = min(5000, max(50, games // 100))
+
+        def run_batch():
+            if state['cancelled']:
+                progress.destroy()
+                return
+            end = min(state['i'] + batch, games)
+            
