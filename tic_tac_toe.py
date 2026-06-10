@@ -152,4 +152,22 @@ class TicTacToeApp:
             bg=self.COLOR_BG, fg=self.COLOR_TEXT,
         )
         self.status.grid(row=1, column=0, columnspan=3, pady=(0, 10))
+
+        grid_frame = tk.Frame(self.root, bg=self.COLOR_BG)
+        grid_frame.grid(row=2, column=0, columnspan=3, padx=20)
+
+        for i in range(9):
+            r, c = divmod(i, 3)
+            cell = tk.Label(
+                grid_frame, text='', font=self.COLOR_TEXT,
+                width=3, height=1,
+                bg=self.COLOR-CELL, fg=self.COLOR_TEXT,
+                bd=0, relief='flat', cursor='hand2',
+            )
+            cell.grid(row=r, column=c, padx=4, pady=4, ipadx=4, ipady=4)
+            cell.bind('<Button-1>', lambda e, idx=i: self._on_cell_click(idx))
+            cell.bind('<Enter>', lambda e, idx=i: self._on_hover(idx, True))
+            cell.bind('<Leave>', lambda e, idx=i: self._on_hover(idx, False))
+            self.cells.append(cell)
+
         
