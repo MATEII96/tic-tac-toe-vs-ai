@@ -64,5 +64,16 @@ class QLearningAI:
     def save(self):
         with open(BRAIN_FILE, 'w', encoding='utf-8') as f:
             json.dump(self.q, f)
+
     def get_q(self, state, move):
         return self.q.get(state, {}).get(move, 0.0)
+    
+    def set_q(self, state, move, value):
+        if state not in self.q:
+            self.q[state] = {}
+            self.q[state][move] = value
+
+    def choose_move(self, board, training=False):
+        state = board_key(board)
+        moves = available_moves(board)
+        
