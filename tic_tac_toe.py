@@ -112,4 +112,23 @@ def smart_opponent_move(board, me, opp, randomness):
     return random.choice(available_moves(board))
     
 class TicTacToeApp:
-    
+    CELL_FONT = ('Segoe UI', 36, 'bold')
+    STATUS_FONT = ('Segoe UI', 13)
+    BTN_FONT = ('Segoe UI', 10)
+
+    COLOR_BG = '#1e1e2e'
+    COLOR_CELL = '#2a2a3e'
+    COLOR_CELL_HOVER = '#363650'
+    COLOR_X = '#7dd3fc'
+    COLOR_O = '#f9a8d4'
+    COLOR_WIN = '#fde047'
+    COLOR_TEXT = '#e4e4e7'
+
+    def __init__(self, root):
+        self.root = root
+        self.root.title('Tic-Tac-Toe AI')
+        self.root.configure(bg=self.COLOR_BG)
+        self.root.resizable(False, False)
+
+        self.ai = QLearningAI()
+        self.board = new_board()
