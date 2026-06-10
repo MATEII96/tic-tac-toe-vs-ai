@@ -76,4 +76,40 @@ class QLearningAI:
     def choose_move(self, board, training=False):
         state = board_key(board)
         moves = available_moves(board)
-        
+
+        if training and random.random() < self.epsilon:
+            move = random.choice(moves)
+        else:
+            best_value - -float('inf')
+            best_moves = []
+            for m in moves:
+                v = self.get_q(state, m)
+                if v > best_value:
+                    best_value = v
+                    best_moves = [m]
+                elif v == best_value:
+                    best_moves.append(m)
+            move = random.choice(best_moves)
+
+        self.history.append((state, move))
+        return move
+    
+    def learn(self):
+        self.history = []
+
+def smart_opponent_move(board, me, opp, randomness):
+    win_now = find_immediate(board, me)
+    if win_now is not None:
+        return win_now
+    block = find_immediate(board, opp)
+    if block is not None and random.random() > randomness:
+        return block
+    if random.random() < randomness:
+        return random.choice(available_moves(board))
+    for pref in (4, 0, 2, 6, 8, 1, 3, 5, 7):
+        if board[pref] == EMPTY:
+            return pref
+    return random.choice(available_moves(board))
+    
+class TicTacToeApp:
+    
