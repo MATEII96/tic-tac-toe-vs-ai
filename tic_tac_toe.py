@@ -181,4 +181,37 @@ class TicTacToeApp:
 
         self._make_button(btn_frame, 'Partida noua', self._new_game).pack(side='left', padx=3)
         self._make_button(btn_frame, 'Antreneaza', self._train).pack(side='left', padx=3)
-        
+        self._make_button(btn_frame, 'Cine Incepe', self._toggle_first).pack(side='left', padx=3)
+        self._make_button(btn_frame, 'Reseteaza AI', self._reset_brain).pack(side='left', padx=3)
+
+        self._refresh_brain_info()
+
+    def  _make_button(self, parent, text, command):
+        return tk.Button(
+            parent, text=text, command=command, font=self.BTN_FONT,
+            bg='#3a3a5a', fg=self.COLOR_TEXT, activebackground = '#4a4a7a',
+            activeforeground=self.COLOR_TEXT, bd=0, padx=10, pady=6, cursor='hand2',
+        )
+    def _refresh_brain_info(self):
+        s = self.stats
+        self.brain_info.config(
+            text=f'Stari invatate: {len(self.ai.q)}  |  Tu: {s['w']} V / {s['l']} I / {s['d']} E'
+        )
+
+    def _on_hover(self, idx, entering):
+        if self.game_over or self.board[idx] != EMPTY:
+            return
+        self.cells[idx].config(bg=self.COLOR_CELL_HOVER if entering else self.COLOR_CELL)
+
+    def _render(self, win_line=None):
+        for i, v in enumerate(self.board):
+            cell = self.cells[i]
+            if v == HUMAN:
+                cell.config(text='X', fg=self.COLOR_X, bg=self.COLOR_CELL)
+            elif v == AI:
+                cell.config(text='O', fg=self.COLOR_O, bg=self.COLOR_CELL)
+            else:
+                cell.config(text='', bg=self.COLOR_CELL)
+        if win_line:
+            for i in win_line:
+                self.cells[i].config(bg=self.COLOR_WIN)
