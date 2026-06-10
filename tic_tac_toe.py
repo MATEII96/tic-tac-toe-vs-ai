@@ -233,4 +233,53 @@ class TicTacToeApp:
         self.human_first = not self.human_first
         who = 'Tu' if self.human_first else 'AI'
         messagebox.showinfo('Cine incepe', f'{who} incepe partida urmatoare.')
-        
+
+    def _on_cell_click(self, idx):
+        if self.game_over or self.board[idx] != EMPTY:
+            return
+        self.board[idx] = HUMAN
+        self._render()
+        if self._check_end():
+            return
+        self._set_status('AI se gandeste...')
+        self.root.after(350, self.ai_turn)
+
+    def _ai_turn(self):
+        if self.game_over:
+            return
+        move = self.ai.choose_move(self.board, training=True)
+        self.board[move] = AI
+        self._render()
+        if self._check_end():
+            return
+        self._set_status('Tura ta (X)')
+    def _check_end(self):
+        result, line = winner(self.board)
+        if result is None:
+            return False
+        self.game_over = True
+        if result == AI:
+            self.ai.learn(1.0)
+            self.stats['l'] += 1
+            self._set_status('AI a castigat. Apasa Partida noua.')
+        elif result == HUMAN:
+            self.ai.learn(-1.0)
+            self.stats['w'] += 1
+            self._set_status('Ai castigat! AI a invatat din asta')
+        else:
+            self.ai.learn(0.3)
+            self.stats['d'] += 1
+            self._set_status('Egal. Apasa Partida noua.')
+        self._render(win_line=line)
+        self.ai.save()
+        self._refresh_brain_info()
+        return True
+    
+    def _train(self):
+        games = simpledialog.askinteger(
+            'Antrenament',
+            'Cate partide sa joace AI singur?\n(recomandat: 1000 - 10000)',
+            parent=self.root, minvalue=1, maxvalue= 200_000_000, initialvalue=2000,
+        )
+        if not games:
+            return
