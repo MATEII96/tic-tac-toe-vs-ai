@@ -215,3 +215,22 @@ class TicTacToeApp:
         if win_line:
             for i in win_line:
                 self.cells[i].config(bg=self.COLOR_WIN)
+
+    def _set_status(self, text):
+        self.status.config(text=text)
+
+    def _new_game(self):
+        self.board = new_board()
+        self.ai.reset_history()
+        self.game_over = False
+        self._render()
+        if self.human_first:
+            self._set_status('Tura ta (X) - da click pe o casuta')
+        else:
+            self._set_status('AI incepe...')
+            self.root.after(400, self._ai_turn)
+    def _toggle_first(self):
+        self.human_first = not self.human_first
+        who = 'Tu' if self.human_first else 'AI'
+        messagebox.showinfo('Cine incepe', f'{who} incepe partida urmatoare.')
+        
