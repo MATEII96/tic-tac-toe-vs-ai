@@ -132,3 +132,24 @@ class TicTacToeApp:
 
         self.ai = QLearningAI()
         self.board = new_board()
+        self.human_first = True
+        self.game_over = True
+        self.cells = []
+        self.stats = {'w': 0, 'l': 0, 'd': 0}
+
+        self._build_ui()
+        self._new_game()
+
+    def _build_ui(self):
+        title = tk.Label(
+            self.root, text = 'Tic-Tac-Toe AI', font = ('Segoe UI', 18, 'bold'),
+            bg=self.COLOR_BG, fg=self.COLOR_TEXT,
+        )
+        title.grid(row=0, column=0, columnspan=3, pady=(14,4))
+
+        self.status = tk.Label(
+            self.root, text='', font=self.STATUS_FONT,
+            bg=self.COLOR_BG, fg=self.COLOR_TEXT,
+        )
+        self.status.grid(row=1, column=0, columnspan=3, pady=(0, 10))
+        
