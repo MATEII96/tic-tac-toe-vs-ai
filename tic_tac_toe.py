@@ -318,4 +318,23 @@ class TicTacToeApp:
                 progress.destroy()
                 return
             end = min(state['i'] + batch, games)
-            
+            for i in range(state['i'], end):
+                self._play_one_self_game(i, games, state)
+            state['i'] = end
+            pct = end / games
+            bar_fill.config(width=int(320 * pct))
+            label.config(text=f'Partida {end} / {games} ({int(pct * 100)}%)')
+            detail.config(text=f'AI: {state['w']} V  |  {state['l']} I  |  {state['d']} E')
+            if end >= games:
+                self.ai.save()
+                self._refresh_brain_info()
+                progress.destroy()
+                messagebox.showinfo(
+                    'Antrenament complet',
+                    f'AI a jucat {games} partide.\n'
+                    f'Victorii: {state['w']} Infrangeri: {state['l']} Egaluri: {state['d']}\n'
+                    f'Stari cunoscute acum: {len(self.ai.q)}'
+                )
+                return
+            self.root.after(1, run_batch)
+        
