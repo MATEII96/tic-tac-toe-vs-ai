@@ -338,3 +338,52 @@ class TicTacToeApp:
                 return
             self.root.after(1, run_batch)
         
+    def _play_one_self_game(self, i, total, state):
+        board = new_board()
+        self.ai.reset_history()
+        current = HUMAN if i % 2 == 0 else AI
+        randomness = max(0.15, 0.8 - 0.65 * (i / max(1, total)))
+        while True:
+            if current == AI:
+                move = self.ai.choose_move(board, training=True)
+            else:
+                move = smart_opponent_move(board, HUMAN, AI, randomness)
+            board[move] = current
+            result,_ = winner(board)
+            if result is not None:
+                if result == AI:
+                    self.ai.learn(1.0)
+                    state['w'] += 1
+                elif result == HUMAN:
+                    self.ai.learn(-1.0)
+                    state['l'] += 1
+                else:
+                    self.ai.learn(0.3)
+                    state['d'] += 1
+                return
+            current = HUMAN if current == AI else AI
+        
+    def _reset_brain(self):
+        if not messagebox.askyesno(
+            'Reseteaza AI', 
+            'Sigur stergi tot ce a invatat AI-ul?\nAceasta actiune nu poate fi anulata.'
+        ):
+            return
+        self.ai.q = {}
+        self.ai.save()
+        self.stats = {'w': 0, 'l': 0, 'd': 0}
+        self._refresh_brain_info()
+        messagebox.showinfo('AI resetat', 'Creierul AI-ului a fost sters.')
+def main():
+    root = tk.Tk()
+    TicTacToeApp(root)
+    root.mainloop()
+
+
+if __name__ == '__main__':
+    main()
+
+
+
+
+
