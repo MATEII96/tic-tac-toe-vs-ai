@@ -26,9 +26,9 @@ def winner(board):
     for a, b, c in WIN_LINES:
         if board[a] != EMPTY and board[a] == board[b] == board[c]:
             return board[a], (a, b, c)
-        if EMPTY not in board:
-            return 'draw', None
-        return None, None
+    if EMPTY not in board:
+        return 'draw', None
+    return None, None
     
 def available_moves(board):
     return [i for i, v in enumerate(board) if v == EMPTY]
@@ -71,7 +71,10 @@ class QLearningAI:
     def set_q(self, state, move, value):
         if state not in self.q:
             self.q[state] = {}
-            self.q[state][move] = value
+        self.q[state][move] = value
+
+    def reset_history(self):
+        self.history = []
 
     def choose_move(self, board, training=False):
         state = board_key(board)
@@ -80,7 +83,7 @@ class QLearningAI:
         if training and random.random() < self.epsilon:
             move = random.choice(moves)
         else:
-            best_value - -float('inf')
+            best_value = -float('inf')
             best_moves = []
             for m in moves:
                 v = self.get_q(state, m)
@@ -94,7 +97,15 @@ class QLearningAI:
         self.history.append((state, move))
         return move
     
-    def learn(self):
+    def learn(self, reward):
+        target = reward
+        for state, move in reversed(self.history):
+            current_q = self.get_q(state, move)
+            new_q = current_q + self.alpha * (target - current_q)
+            if state not in self.q:
+                self.q[state] = {}
+            self.q[state][move] = new_q
+            target = new_q * self.gamma
         self.history = []
 
 def smart_opponent_move(board, me, opp, randomness):
@@ -159,9 +170,9 @@ class TicTacToeApp:
         for i in range(9):
             r, c = divmod(i, 3)
             cell = tk.Label(
-                grid_frame, text='', font=self.COLOR_TEXT,
+                grid_frame, text='', font=self.CELL_FONT,
                 width=3, height=1,
-                bg=self.COLOR-CELL, fg=self.COLOR_TEXT,
+                bg=self.COLOR_CELL, fg=self.COLOR_TEXT,
                 bd=0, relief='flat', cursor='hand2',
             )
             cell.grid(row=r, column=c, padx=4, pady=4, ipadx=4, ipady=4)
@@ -195,7 +206,7 @@ class TicTacToeApp:
     def _refresh_brain_info(self):
         s = self.stats
         self.brain_info.config(
-            text=f'Stari invatate: {len(self.ai.q)}  |  Tu: {s['w']} V / {s['l']} I / {s['d']} E'
+            text=f"Stari invatate: {len(self.ai.q)}  |  Tu: {s['w']} V / {s['l']} I / {s['d']} E"
         )
 
     def _on_hover(self, idx, entering):
@@ -242,7 +253,7 @@ class TicTacToeApp:
         if self._check_end():
             return
         self._set_status('AI se gandeste...')
-        self.root.after(350, self.ai_turn)
+        self.root.after(350, self._ai_turn)
 
     def _ai_turn(self):
         if self.game_over:
@@ -324,7 +335,7 @@ class TicTacToeApp:
             pct = end / games
             bar_fill.config(width=int(320 * pct))
             label.config(text=f'Partida {end} / {games} ({int(pct * 100)}%)')
-            detail.config(text=f'AI: {state['w']} V  |  {state['l']} I  |  {state['d']} E')
+            detail.config(text=f"AI: {state['w']} V  |  {state['l']} I  |  {state['d']} E")
             if end >= games:
                 self.ai.save()
                 self._refresh_brain_info()
@@ -332,11 +343,13 @@ class TicTacToeApp:
                 messagebox.showinfo(
                     'Antrenament complet',
                     f'AI a jucat {games} partide.\n'
-                    f'Victorii: {state['w']} Infrangeri: {state['l']} Egaluri: {state['d']}\n'
+                    f"Victorii: {state['w']} Infrangeri: {state['l']} Egaluri: {state['d']}\n"
                     f'Stari cunoscute acum: {len(self.ai.q)}'
                 )
                 return
             self.root.after(1, run_batch)
+
+        run_batch()
         
     def _play_one_self_game(self, i, total, state):
         board = new_board()
@@ -382,8 +395,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-
-
-
-
-
