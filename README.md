@@ -11,4 +11,4 @@ Also,the memory of the ai saves in a .json file.
 
 
 
-Ai used for debuging
+Ai used for debugging.
