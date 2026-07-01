@@ -7,6 +7,8 @@ At first the ai know only the rules but if you keep playing it will learn from m
 If you do not have time to train it for thousands of games,you can use the setting that trains automatically very fast.
 It is in the romanian language and it is a good game when bored:)).
 Hope you like it:)).
+<img width="1919" height="1079" alt="image" src="https://github.com/user-attachments/assets/a54f6c94-1488-4d83-afc3-52d08b064608" />
+
 
 ## Technical information:
 
