@@ -32,3 +32,5 @@ Since the game is in romanian I will make a guide on how to play it:
 ## AI use:
 
 Ai used for debugging.
+
+#horizons
